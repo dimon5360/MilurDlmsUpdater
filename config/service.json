@@ -1,0 +1,13 @@
+[
+    {
+        "name": "device1",
+        "interface": "Serial",
+        "port": "COM10"
+    },
+    
+    {
+        "name": "device2",
+        "interface": "TCP",
+        "port": "localhost:40400"
+    }
+]
