@@ -21,4 +21,6 @@ func StartApp() {
 	for _, device := range devicesConfig {
 		ioservice.Init(ioservice.Create(&device))
 	}
+
+	ioservice.TestStates()
 }
