@@ -2,11 +2,19 @@
     {
         "name": "device1",
         "interface": "Serial",
+        "speed": 9600,
         "port": "COM10"
     },
-    
+
     {
         "name": "device2",
+        "interface": "Serial",
+        "speed": 9600,
+        "port": "COM11"
+    },
+
+    {
+        "name": "device3",
         "interface": "TCP",
         "port": "localhost:40400"
     }

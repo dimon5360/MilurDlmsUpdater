@@ -53,13 +53,3 @@ func (ctx *Context) Close() {
 	ctx.setState(ctx.closedState)
     ctx.currentState.Close()
 }
-
-func TestStates() {
-	ctx := newContext()
-
-    ctx.Open()
-    ctx.Exchange()
-    ctx.Exchange()
-    ctx.Exchange()
-    ctx.Close()
-}

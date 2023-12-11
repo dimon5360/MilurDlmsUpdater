@@ -13,9 +13,10 @@ type App struct {
 }
 
 type Device struct {
-	Name string `json:"name"`
-	Type string `json:"interface"`
-	Port string `json:"port"`
+	Name 	string `json:"name"`
+	Type 	string `json:"interface"`
+	Speed 	int    `json:"speed"`
+	Port 	string `json:"port"`
 }
 
 type Service struct {

@@ -4,10 +4,12 @@ import (
 	"app/main/internal/config"
 	ioservice "app/main/internal/io"
 	"fmt"
+	"sync"
 )
 
 func StartApp() {
 
+	var wg sync.WaitGroup
 	var appConfig config.App
 	var devicesConfig []config.Device
 
@@ -19,8 +21,13 @@ func StartApp() {
 	fmt.Println(info)
 
 	for _, device := range devicesConfig {
-		ioservice.Init(ioservice.Create(&device))
+
+		service := ioservice.Create(&device)
+		ioservice.Init(service)
+
+        wg.Add(1)
+		go service.Run(&wg)
 	}
 
-	ioservice.TestStates()
+	wg.Wait()
 }
