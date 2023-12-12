@@ -45,7 +45,8 @@ func (ctx *Context) Open() {
 	ctx.setState(ctx.openState)
     ctx.currentState.Open()
 
-	ctx.io.Write([]byte("10,20,30\n\r"))
+	request := []byte{0xFA, 0xA5, 0x5F, 0xDC, 0x30, 0x81}
+	ctx.io.Write(request)
 	resp := make([]byte, 128)
 	ctx.io.Read(resp)
 
