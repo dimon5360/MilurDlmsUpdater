@@ -43,30 +43,18 @@ func (ctx *Context) setState(state state.State) {
 
 func (ctx *Context) Open() {
 	ctx.setState(ctx.openState)
-	ctx.currentState.Open()
 
-	request := []byte{0xFA, 0xA5, 0x5F, 0xDC, 0x30, 0x81}
-	ctx.io.Write(request)
-
-	resp := make([]byte, 0)
-
-	for {
-		bytes := make([]byte, 128)
-
-		n, err := ctx.io.Read(bytes)
-		if err != nil {
-			log.Fatal(err)
-			break
-		}
-
-		if n == 0 {
-			break
-		}
-
-		resp = append(resp, bytes[:n]...)
+	addr, err := queryPhysicalAddress(ctx.io)
+	if err != nil {
+		ctx.setState(ctx.closedState)
+		return;
 	}
-	log.Printf("Got bytes %v\n", resp)
 
+	log.Printf("Got physical address %v\n", addr)
+
+	// TODO: process address size and address itself
+
+	ctx.currentState.Open()
 	ctx.setState(ctx.idleState)
 }
 
