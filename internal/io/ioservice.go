@@ -12,7 +12,7 @@ type IO struct {
 }
 
 type Service interface {
-	Init()
+	Init() error
 	Run(wg *sync.WaitGroup)
 }
 
@@ -22,12 +22,12 @@ func Create(device *config.Device) Service {
 	case "Serial":
 		{
 			fmt.Println("Create Serial IO service")
-			return newSerialIO(device, newContext())
+			return newSerialIO(device)
 		}
 	case "TCP":
 		{
 			fmt.Println("Create TCP IO service")
-			return newTcpIO(device, newContext())
+			return newTcpIO(device)
 		}
 	default:
 		{
@@ -36,8 +36,8 @@ func Create(device *config.Device) Service {
 	}
 }
 
-func Init(s Service) {
-	s.Init()
+func Init(s Service) error {
+	return s.Init()
 }
 
 func Run(s Service, wg *sync.WaitGroup) {

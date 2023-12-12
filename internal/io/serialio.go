@@ -2,11 +2,9 @@ package ioservice
 
 import (
 	"app/main/internal/config"
-	"fmt"
 	"log"
 	"slices"
 	"sync"
-	"time"
 
 	"go.bug.st/serial"
 )
@@ -19,50 +17,46 @@ type SerialIO struct {
 	ctx 	*Context
 }
 
-func newSerialIO(device *config.Device, ctx *Context) *SerialIO {
-	return &SerialIO{device.Port, device.Speed, nil, ctx}
+func newSerialIO(device *config.Device) *SerialIO {
+	return &SerialIO{device.Port, device.Speed, nil, &Context{}}
 }
 
-func (io *SerialIO) Init() {
+func (io *SerialIO) Init() error {
 
 	ports, err := serial.GetPortsList()
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		return err
 	}
 
 	if len(ports) == 0 {
-		log.Fatal("No serial ports found!")
+		log.Println("No serial ports found!")
+		return err
 	}
 
 	if slices.Contains(ports, io.Port) {
-		log.Fatalf("No serial %s found!", io.Port)
+		log.Printf("No serial %s found!", io.Port)
+		return err
 	}
 
 	log.Printf("Found port: %v\n", io.Port)
 
 	port, err := serial.Open(io.Port, &serial.Mode{BaudRate: io.Speed})
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		return err
 	}
 
 	io.port = port
+	return nil
 }
 
 func (io *SerialIO) Run(wg *sync.WaitGroup) {
 	defer wg.Done()
 
-	io.ctx.Open(io.port)
-
-	// long job imitation
-	for i := 1; i <= 3; i++ {
-		fmt.Println("Serial port exchange ...")
-
-		io.port.Write([]byte("10,20,30\n\r"))
-		buf := make([]byte, 128)
-		io.port.Read(buf)
-
-		time.Sleep(time.Second)
-		io.ctx.Exchange()
-	}
+	io.ctx.Init(io.port)
+	io.ctx.Open()
     io.ctx.Close()
+
+	io.port.Close()
 }

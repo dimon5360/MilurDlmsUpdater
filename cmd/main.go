@@ -4,6 +4,7 @@ import (
 	"app/main/internal/config"
 	ioservice "app/main/internal/io"
 	"fmt"
+	"log"
 	"sync"
 )
 
@@ -23,7 +24,12 @@ func StartApp() {
 	for _, device := range devicesConfig {
 
 		service := ioservice.Create(&device)
-		ioservice.Init(service)
+		err := ioservice.Init(service)
+
+		if err != nil {
+			log.Println("Service creation failed")
+			continue
+		}
 
         wg.Add(1)
 		go service.Run(&wg)
