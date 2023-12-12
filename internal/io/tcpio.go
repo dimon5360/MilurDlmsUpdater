@@ -21,17 +21,17 @@ func newTcpIO(device *config.Device) *TcpIO {
 func (io *TcpIO) Init() error {
 	log.Printf("Open TPC port: %v\n", io.Port)
 
-    tcpAddr, err := net.ResolveTCPAddr("tcp", io.Port)
-    if err != nil {
-        log.Println("ResolveTCPAddr failed:", err.Error())
+	tcpAddr, err := net.ResolveTCPAddr("tcp", io.Port)
+	if err != nil {
+		log.Println("ResolveTCPAddr failed:", err.Error())
 		return err
-    }
+	}
 
-    conn, err := net.DialTCP("tcp", nil, tcpAddr)
-    if err != nil {
-        log.Printf("Dial failed: %v\n", err.Error())
+	conn, err := net.DialTCP("tcp", nil, tcpAddr)
+	if err != nil {
+		log.Printf("Dial failed: %v\n", err.Error())
 		return err
-    }
+	}
 
 	io.port = conn
 	return nil
@@ -42,7 +42,7 @@ func (io *TcpIO) Run(wg *sync.WaitGroup) {
 
 	io.ctx.Init(io.port)
 	io.ctx.Open()
-    io.ctx.Close()
+	io.ctx.Close()
 
 	io.port.Close()
 }

@@ -2,19 +2,21 @@ package ioservice
 
 import (
 	"app/main/internal/config"
+	"fmt"
 	"log"
 	"slices"
 	"sync"
+	"time"
 
 	"go.bug.st/serial"
 )
 
 type SerialIO struct {
-	Port 	string
-	Speed 	int
+	Port  string
+	Speed int
 
-	port 	serial.Port
-	ctx 	*Context
+	port serial.Port
+	ctx  *Context
 }
 
 func newSerialIO(device *config.Device) *SerialIO {
@@ -34,9 +36,14 @@ func (io *SerialIO) Init() error {
 		return err
 	}
 
+	log.Println("Free serial ports:")
+	for _, port := range ports {
+		log.Printf("\t%v\n", port)
+	}
+
 	if slices.Contains(ports, io.Port) {
 		log.Printf("No serial %s found!", io.Port)
-		return err
+		return fmt.Errorf("%s: %s", "Serial port found", io.Port)
 	}
 
 	log.Printf("Found port: %v\n", io.Port)
@@ -48,7 +55,8 @@ func (io *SerialIO) Init() error {
 	}
 
 	io.port = port
-	return nil
+
+	return io.port.SetReadTimeout(time.Duration(100) * time.Millisecond)
 }
 
 func (io *SerialIO) Run(wg *sync.WaitGroup) {
@@ -56,7 +64,7 @@ func (io *SerialIO) Run(wg *sync.WaitGroup) {
 
 	io.ctx.Init(io.port)
 	io.ctx.Open()
-    io.ctx.Close()
+	io.ctx.Close()
 
 	io.port.Close()
 }
