@@ -14,11 +14,13 @@ import (
 type SerialIO struct {
 	Port 	string
 	Speed 	int
+
+	port 	serial.Port
 	ctx 	*Context
 }
 
 func newSerialIO(device *config.Device, ctx *Context) *SerialIO {
-	return &SerialIO{device.Port, device.Speed, ctx}
+	return &SerialIO{device.Port, device.Speed, nil, ctx}
 }
 
 func (io *SerialIO) Init() {
@@ -43,23 +45,22 @@ func (io *SerialIO) Init() {
 		log.Fatal(err)
 	}
 
-	// test string
-	n, err := port.Write([]byte("10,20,30\n\r"))
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	log.Printf("Sent %d bytes\n", n)
+	io.port = port
 }
 
 func (io *SerialIO) Run(wg *sync.WaitGroup) {
 	defer wg.Done()
 
-	io.ctx.Open()
+	io.ctx.Open(io.port)
 
 	// long job imitation
 	for i := 1; i <= 3; i++ {
 		fmt.Println("Serial port exchange ...")
+
+		io.port.Write([]byte("10,20,30\n\r"))
+		buf := make([]byte, 128)
+		io.port.Read(buf)
+
 		time.Sleep(time.Second)
 		io.ctx.Exchange()
 	}

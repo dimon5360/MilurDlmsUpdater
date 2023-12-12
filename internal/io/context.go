@@ -5,6 +5,11 @@ import (
 	"log"
 )
 
+type Connection interface {
+	Write([]byte) (int, error)
+	Read([]byte) (int, error)
+}
+
 type Context struct {
     currentState 	state.State
 
@@ -12,6 +17,8 @@ type Context struct {
     idleState 		state.State
     exchangeState 	state.State
     closedState 	state.State
+
+	conn 			Connection
 }
 
 func newContext() *Context {
@@ -37,7 +44,9 @@ func (ctx *Context) setState(state state.State) {
 	log.Println("New state:", ctx.currentState.GetDescription())
 }
 
-func (ctx *Context) Open() {
+func (ctx *Context) Open(conn Connection) {
+	ctx.conn = conn
+
 	ctx.setState(ctx.openState)
     ctx.currentState.Open()
 	ctx.setState(ctx.idleState)
