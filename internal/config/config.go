@@ -10,6 +10,7 @@ import (
 type App struct {
 	Appname    string `json:"appname"`
 	Appversion string `json:"appversion"`
+	Builddate  string `json:"builddate"`
 }
 
 type Device struct {

@@ -17,9 +17,8 @@ func StartApp() {
 	config.Parse("config/app.json", &appConfig)
 	config.Parse("config/service.json", &devicesConfig)
 
-	info := fmt.Sprintf("%s v.%s", appConfig.Appname, appConfig.Appversion)
-
-	fmt.Println(info)
+	fmt.Printf("%s v.%s\n", appConfig.Appname, appConfig.Appversion)
+	fmt.Printf("Build datetime: %s\n\n", appConfig.Builddate)
 
 	for _, device := range devicesConfig {
 

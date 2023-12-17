@@ -34,7 +34,7 @@ func queryPhysicalAddress(io IO) ([]byte, error) {
 	log.Printf("Got bytes %v\n", resp)
 
 	if [4]byte(resp[:4]) != [4]byte([]byte{0xFA, 0xA5, 0x5F, 0xDC}) {
-		return nil, fmt.Errorf("%s", "Physical address doesn't responded")
+		return nil, fmt.Errorf("%s", "Physical address request failed")
 	}
 
 	addressSize := resp[4]
