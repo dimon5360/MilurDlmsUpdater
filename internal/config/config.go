@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-type App struct {
+type Info struct {
 	Appname    string `json:"appname"`
 	Appversion string `json:"appversion"`
 	Builddate  string `json:"builddate"`

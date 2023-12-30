@@ -6,5 +6,7 @@ import (
 
 func main() {
 
-	cmd.StartApp()
+	cmd.App().
+		Config().
+		Run()
 }

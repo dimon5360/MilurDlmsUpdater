@@ -8,19 +8,30 @@ import (
 	"sync"
 )
 
-func StartApp() {
+type app struct {
+	wg sync.WaitGroup
+	config config.Info
+	devicesConfig []config.Device
+}
 
-	var wg sync.WaitGroup
-	var appConfig config.App
-	var devicesConfig []config.Device
+func App() *app {
+	return &app{}
+}
 
-	config.Parse("config/app.json", &appConfig)
-	config.Parse("config/service.json", &devicesConfig)
+func (a *app) Config() *app {
 
-	fmt.Printf("%s v.%s\n", appConfig.Appname, appConfig.Appversion)
-	fmt.Printf("Build datetime: %s\n\n", appConfig.Builddate)
+	config.Parse("config/app.json", &a.config)
+	config.Parse("config/service.json", &a.devicesConfig)
 
-	for _, device := range devicesConfig {
+	fmt.Printf("%s v.%s\n", a.config.Appname, a.config.Appversion)
+	fmt.Printf("Build datetime: %s\n\n", a.config.Builddate)
+
+	return a
+}
+
+func (a *app) Run() {
+
+	for _, device := range a.devicesConfig {
 
 		service := ioservice.Create(&device)
 		err := ioservice.Init(service)
@@ -30,9 +41,9 @@ func StartApp() {
 			continue
 		}
 
-        wg.Add(1)
-		go service.Run(&wg)
+        a.wg.Add(1)
+		go service.Run(&a.wg)
 	}
 
-	wg.Wait()
+	a.wg.Wait()
 }
