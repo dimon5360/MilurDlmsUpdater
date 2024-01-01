@@ -4,9 +4,12 @@ import (
 	"app/main/cmd"
 )
 
-func main() {
+const (
+	app_config = "config/app.json"
+	service_config = "config/service.json"
+)
 
-	cmd.App().
-		Config().
-		Run()
+func main() {
+	app := cmd.NewApp(app_config)
+	app.Config(service_config).Run()
 }
